@@ -1,25 +1,28 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 10f;
     public float jumpForce = 10f;
+    public float groundDistance = 0.5f;
     public float lookSpeed = 12f;
     private float rotationX = 0f;
+    private bool isGrounded;
 
     private Rigidbody rb;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Forhindrer at spilleren roterer når de beveger seg
+        rb.freezeRotation = true;
     }
 
-    void Update()
+    private void Update()
     {
         MovePlayer();
-        LookAround();
         Jump();
+        LookAround();
     }
 
     private void MovePlayer()
@@ -33,28 +36,32 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
-    private bool IsGrounded()
+    private void OnCollisionStay(Collision collision)
     {
-        RaycastHit hit;
-        float raycastDistance = 0.1f;
-        return Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance);
+        isGrounded = true;
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false;
     }
 
     private void LookAround()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
-        float mouseY = Input.GetAxis("Mouse Y") * lookSpeed;
+{
+    float mouseX = Input.GetAxis("Mouse X") * lookSpeed * Time.deltaTime;
+    float mouseY = Input.GetAxis("Mouse Y") * lookSpeed * Time.deltaTime;
 
-        rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+    rotationX -= mouseY;
+    rotationX = Mathf.Clamp(rotationX, -90f, 90f);
 
-        Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
-    }
+    transform.Rotate(Vector3.up * mouseX);
+    Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+}
+
 }
