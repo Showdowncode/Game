@@ -10,11 +10,11 @@ public class dig : MonoBehaviour
     // Update is called once per frame
     [System.Obsolete]
     void Update() {
-        if (Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp (0)) {
             AddCube ();
         }
 
-         if (Input.GetMouseButtonUp(1)) {
+         if (Input.GetMouseButtonUp (1)) {
             RemoveCube ();
         }
 
@@ -30,11 +30,12 @@ public class dig : MonoBehaviour
         if (Physics.Raycast (ray, out hit, 5f)) {
             Vector3 newPos = hit.transform.position;
             
-            GameObject newB = Instantiate(hit.collider.gameObject);
+            GameObject newB = Instantiate (hit.collider.gameObject);
 
             newB.transform.position = newPos;
-            newB.transform.Translate(hit.normal * 1f);
+            newB.transform.Translate (hit.normal * 1f);
 
+            newB.gameObject.tag = "imadethis";
 
         }
 
@@ -54,7 +55,13 @@ public class dig : MonoBehaviour
 
             //newB.transform.position = newPos;
             //newB.transform.Translate(hit.normal * 1f);
-            DestroyObject(hit.collider.gameObject);
+
+            if (hit.collider.gameObject.CompareTag ("imadethis")) {
+                DestroyObject (hit.collider.gameObject);
+            }
+            else if (!hit.collider.gameObject.CompareTag ("imadethis")) {
+                hit.transform.Translate (Vector3.down * 1f);
+            }
             
         }
 
