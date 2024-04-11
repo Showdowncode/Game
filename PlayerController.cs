@@ -11,11 +11,16 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
 
     private Rigidbody rb;
+    private float verticalRotation = 0f;
+    private bool isCursorLocked = true; // Legg til en variabel for å holde styr på musepekerlåsstatus
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        // Låser muspekeren ved oppstart
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -23,6 +28,7 @@ public class PlayerController : MonoBehaviour
         MovePlayer();
         Jump();
         LookAround();
+        LockUnlockCursor(); // Sjekker om muspekeren skal låses eller låses opp
     }
 
     private void MovePlayer()
@@ -43,27 +49,33 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionStay(Collision collision)
-{
-    isGrounded = true;
-    Debug.Log("OnCollisionStay called");
-}
+    {
+        isGrounded = true;
+    }
 
-private void OnCollisionExit(Collision collision)
-{
-    isGrounded = false;
-    Debug.Log("OnCollisionExit called");
-}
-
+    private void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false;
+    }
 
     private void LookAround()
     {
         float mouseX = Input.GetAxis("Mouse X") * lookSpeed * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * lookSpeed * Time.deltaTime;
-
-        rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
-
+        verticalRotation -= mouseY; // Endret til substraksjon for å få riktig rotasjon
+        verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
         transform.Rotate(Vector3.up * mouseX);
-        Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+        Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+    }
+
+    private void LockUnlockCursor()
+    {
+        // Låser eller låser opp musepekeren når spilleren trykker på Esc-tasten
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isCursorLocked = !isCursorLocked;
+            Cursor.lockState = isCursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !isCursorLocked;
+        }
     }
 }

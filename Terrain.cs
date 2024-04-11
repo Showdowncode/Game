@@ -33,7 +33,7 @@ public class Terrain : MonoBehaviour
 
             y = Mathf.Floor (y);
 
-            if (y > amp/2) currentBlockType =blockTypes[1];
+            if (y > amp/3) currentBlockType =blockTypes[1];
             else currentBlockType = blockTypes[0];
 
             GameObject newBlock = GameObject.Instantiate(currentBlockType);
