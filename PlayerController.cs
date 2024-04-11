@@ -43,25 +43,27 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionStay(Collision collision)
-    {
-        isGrounded = true;
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        isGrounded = false;
-    }
-
-    private void LookAround()
 {
-    float mouseX = Input.GetAxis("Mouse X") * lookSpeed * Time.deltaTime;
-    float mouseY = Input.GetAxis("Mouse Y") * lookSpeed * Time.deltaTime;
-
-    rotationX -= mouseY;
-    rotationX = Mathf.Clamp(rotationX, -90f, 90f);
-
-    transform.Rotate(Vector3.up * mouseX);
-    Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+    isGrounded = true;
+    Debug.Log("OnCollisionStay called");
 }
 
+private void OnCollisionExit(Collision collision)
+{
+    isGrounded = false;
+    Debug.Log("OnCollisionExit called");
+}
+
+
+    private void LookAround()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * lookSpeed * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * lookSpeed * Time.deltaTime;
+
+        rotationX -= mouseY;
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+
+        transform.Rotate(Vector3.up * mouseX);
+        Camera.main.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+    }
 }
